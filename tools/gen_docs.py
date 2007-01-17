@@ -1,15 +1,22 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2006, TUBITAK/UEKAE
+#
+# This program is free software; you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free
+# Software Foundation; either version 2 of the License, or (at your option)
+# any later version.
+#
+# Please read the COPYING file.
+#
 
 modules_s = set(dir())
 from pmp import *
 modules_s = set(dir()) - modules_s - set(["modules_s"])
 
-modules = []
-for s in modules_s:
-    modules.append(__import__("pmp."+s, globals(), locals(), [""]))
-
-
 import inspect
 import re
+
 
 def print_functions(m):
     for f in inspect.getmembers(m, inspect.isfunction):
@@ -43,5 +50,8 @@ def print_modules(modules):
         print
         print
 
-
-print_modules(modules)    
+if __name__ == "__main__":
+    modules = []
+    for s in modules_s:
+        modules.append(__import__("pmp."+s, globals(), locals(), [""]))
+    print_modules(modules)    
