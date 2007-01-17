@@ -13,6 +13,8 @@
 """sysutils module provides basic file I/0 utility functions."""
 
 import os
+import time
+import fcntl
 import codecs
 
 
@@ -20,21 +22,35 @@ class FileutilsException(Exception):
     pass
 
 
-def open_utf8(filepath, mode="r"):
-    """Open UTF-8 encoded file with the given mode."""
-
-    return codecs.open(filepath, mode, "utf-8")
-
-
-def save_utf8(filepath, data, overwrite=True):
-    """Save UTF-8 encoded data to filepath."""
-
-    if os.path.exists(filepath) and not overwrite:
-        raise FileutilsException, "File exists: %s" % filepath
-
-    f = codecs.open(filepath, "w", "utf-8")
-    f.write(data)
-    f.close()
+class FileLock:
+    def __init__(self, filename):
+        self.filename = filename
+        self.fd = None
+    
+    def lock(self, shared=False, timeout=-1):
+        type = fcntl.LOCK_EX
+        if shared:
+            type = fcntl.LOCK_SH
+        if timeout != -1:
+            type |= fcntl.LOCK_NB
+        
+        self.fd = os.open(self.filename, os.O_WRONLY | os.O_CREAT, 0600)
+        if self.fd == -1:
+            raise "Cannot create lock file"
+        
+        while True:
+            try:
+                fcntl.flock(self.fd, type)
+                return
+            except IOError:
+                if timeout > 0:
+                    time.sleep(0.2)
+                    timeout -= 0.2
+                else:
+                    raise
+    
+    def unlock(self):
+        fcntl.flock(self.fd, fcntl.LOCK_UN)
 
 
 def touch(filename):
