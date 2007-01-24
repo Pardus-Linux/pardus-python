@@ -27,15 +27,15 @@ capslock_isOn(PyObject *self, PyObject *args)
 
     display = XOpenDisplay(0);
     XQueryPointer(display, DefaultRootWindow(display),
-		   &dummy1, &dummy2, &dummy3, &dummy4, &dummy5, &dummy6,
-		   &lmask);
+           &dummy1, &dummy2, &dummy3, &dummy4, &dummy5, &dummy6,
+           &lmask);
     capsLocked = lmask & LockMask;
     XCloseDisplay(display);
 
     if (capsLocked)
     {
-	Py_INCREF(Py_True);
-	return Py_True;
+        Py_INCREF(Py_True);
+        return Py_True;
     }
 
     Py_INCREF(Py_False);
