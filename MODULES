@@ -1,4 +1,4 @@
-Module 'pmp.strutils'
+Module 'pardus.strutils'
 ----------------------------------------
 string/list/functional utility functions
 
@@ -32,7 +32,7 @@ unzip (seq)
 
 
 
-Module 'pmp.dirutils'
+Module 'pardus.dirutils'
 ----------------------------------------
 dirutils module provides basic directory functions.
 
@@ -44,7 +44,7 @@ Remove all content of a directory.
 
 
 
-Module 'pmp.sysutils'
+Module 'pardus.sysutils'
 ----------------------------------------
 sysutils module provides basic system utilities.
 
@@ -53,17 +53,17 @@ find the given executable in PATH
 
 
 
-Module 'pmp.xorg'
+Module 'pardus.xorg'
 ----------------------------------------
 None
 
-Module 'pmp.xorg.capslock'
+Module 'pardus.xorg.capslock'
 ----------------------------------------
 None
 
 
 
-Module 'pmp.xorg.xterm'
+Module 'pardus.xorg.xterm'
 ----------------------------------------
 None
 
@@ -77,22 +77,16 @@ Set message as console window title.
 
 
 
-Module 'pmp.fileutils'
+Module 'pardus.fileutils'
 ----------------------------------------
 sysutils module provides basic file I/0 utility functions.
-
-open_utf8 (filepath,mode)
-Open UTF-8 encoded file with the given mode.
-
-save_utf8 (filepath,data,overwrite)
-Save UTF-8 encoded data to filepath.
 
 touch (filename)
 Update file modification date, create file if necessary
 
 
 
-Module 'pmp.procutils'
+Module 'pardus.procutils'
 ----------------------------------------
 procutils module provides basic process utilities.
 
