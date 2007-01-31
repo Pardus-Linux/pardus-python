@@ -47,26 +47,3 @@ class FileLock:
     def unlock(self):
         fcntl.flock(self.fd, fcntl.LOCK_UN)
 
-
-def touch(filename):
-    """Update file modification date, create file if necessary"""
-    try:
-        if os.path.exists(filename):
-            os.utime(filename, None)
-        else:
-            file(filename, "w").close()
-    except IOError, e:
-        if e.errno != 13:
-            raise
-        else:
-            return False
-    except OSError, e:
-        if e.errno != 13:
-            raise
-        else:
-            return False
-    return True
-
-
-
-
