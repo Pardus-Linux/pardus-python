@@ -13,7 +13,7 @@
 """string/list/functional utility functions"""
 
 import operator
-
+import string
 
 def every(pred, seq):
     return reduce(operator.and_, map(pred, seq), True)
@@ -76,3 +76,11 @@ def human_readable_size(size = 0):
 def human_readable_rate(size = 0):
     x = human_readable_size(size)
     return x[0], x[1] + '/s'
+
+def ascii_lower(str):
+    trans_table = string.maketrans(string.ascii_uppercase, string.ascii_lowercase)
+    return str.translate(trans_table)
+
+def ascii_upper(str):
+    trans_table = string.maketrans(string.ascii_lowercase, string.ascii_uppercase)
+    return str.translate(trans_table)
