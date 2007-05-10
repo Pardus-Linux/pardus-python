@@ -78,9 +78,11 @@ def human_readable_rate(size = 0):
     return x[0], x[1] + '/s'
 
 def ascii_lower(str):
+    """Ascii only version of string.lower()"""
     trans_table = string.maketrans(string.ascii_uppercase, string.ascii_lowercase)
     return str.translate(trans_table)
 
 def ascii_upper(str):
+    """Ascii only version of string.upper()"""
     trans_table = string.maketrans(string.ascii_lowercase, string.ascii_uppercase)
     return str.translate(trans_table)
