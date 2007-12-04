@@ -13,9 +13,9 @@
 """sysutils module provides basic file I/0 utility functions."""
 
 import binascii
+import fnmatch
 import struct
 import os
-import glob
 
 class EDD:
     def __init__(self):
@@ -25,10 +25,12 @@ class EDD:
 
     def blockDevices(self):
         devices = []
-        for dev_type in ["hd*", "sd*"]:
-            sysfs_devs = glob.glob("/sys/block/" + dev_type)
-            for sysfs_dev in sysfs_devs:
-                devices.append("/dev/" + os.path.basename(sysfs_dev))
+        for sysfs_dev in os.listdir("/sys/block"):
+            if filter(lambda x: fnmatch.fnmatch(sysfs_dev, x), ["fd*", "loop*", "ram*"]):
+                continue
+            dev_name = os.path.basename(sysfs_dev)
+            dev_name = dev_name.replace("!", "/")
+            devices.append("/dev/" + dev_name)
         devices.sort()
         return devices
 
