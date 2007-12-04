@@ -13,6 +13,7 @@
 __version__ = "0.1"
 
 __all__ = ["dirutils",
+           "diskutils",
            "fileutils",
            "procutils",
            "strutils",
