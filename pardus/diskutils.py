@@ -10,7 +10,7 @@
 # Please read the COPYING file.
 #
 
-"""sysutils module provides basic file I/0 utility functions."""
+"""diskutils module provides EDD class to query device boot order."""
 
 import binascii
 import fnmatch

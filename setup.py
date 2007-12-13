@@ -1,10 +1,45 @@
 #-*- coding: utf-8 -*-
 
+import os
 import os.path
+import sys
+import glob
+import shutil
 from distutils.core import setup, Extension
 from distutils.command.install import install
 
 import pardus
+
+distfiles = """
+    setup.py
+    pardus/*.py
+    tools/*.py
+    MODULES
+    README
+"""
+
+def make_dist():
+    distdir = "pardus-python-%s" % pardus.versionString()
+    list = []
+    for t in distfiles.split():
+        list.extend(glob.glob(t))
+    if os.path.exists(distdir):
+        shutil.rmtree(distdir)
+    os.mkdir(distdir)
+    for file_ in list:
+        cum = distdir[:]
+        for d in os.path.dirname(file_).split('/'):
+            dn = os.path.join(cum, d)
+            cum = dn[:]
+            if not os.path.exists(dn):
+                os.mkdir(dn)
+        shutil.copy(file_, os.path.join(distdir, file_))
+    os.popen("tar -czf %s %s" % ("pardus-python-" + pardus.versionString() + ".tar.gz", distdir))
+    shutil.rmtree(distdir)
+
+if "dist" in sys.argv:
+    make_dist()
+    sys.exit(0)
 
 class Install(install):
     def finalize_options(self):
