@@ -13,6 +13,8 @@ import pardus
 distfiles = """
     setup.py
     pardus/*.py
+    pardus/xorg/*.py
+    pardus/xorg/*.c
     tools/*.py
     MODULES
     README
