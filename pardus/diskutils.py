@@ -43,7 +43,7 @@ class EDD:
         if os.path.exists(sigfile):
             sig = file(sigfile).read().strip("\n")
         else:
-            sig = "NOT FOUND"
+            sig = None
 
         return sig
 
@@ -61,7 +61,9 @@ class EDD:
         if os.path.exists(self.edd_dir):
             for d in os.listdir(self.edd_dir):
                 bios_num = d[9:]
-                sigs[bios_num] = self.get_edd_sig(bios_num)
+                sig = self.get_edd_sig(bios_num)
+                if sig:
+                    sigs[bios_num] = sig
         else:
             print "please insert edd module"
         return sigs
