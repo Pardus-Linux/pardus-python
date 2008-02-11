@@ -1,3 +1,4 @@
+#!/usr/bin/python
 #-*- coding: utf-8 -*-
 
 import os
@@ -13,6 +14,7 @@ import pardus
 distfiles = """
     setup.py
     pardus/*.py
+    pardus/*.c
     pardus/xorg/*.py
     pardus/xorg/*.c
     tools/*.py
@@ -59,11 +61,15 @@ setup(name="pardus",
       description="Python Modules for Pardus",
       long_description="Python Modules for Pardus.",
       license="GNU GPL2",
-      author="Barış Metin",
-      author_email="baris@pardus.org.tr",
+      author="Bahadır Kandemir",
+      author_email="bahadir@pardus.org.tr",
       url="http://www.pardus.org.tr/",
       packages = ['pardus', 'pardus.xorg'],
       ext_modules = [Extension('pardus.xorg.capslock',
                                sources=['pardus/xorg/capslock.c'],
-                               libraries=['X11'])],
+                               libraries=['X11']),
+                     Extension('pardus.csapi',
+                               sources=['pardus/csapi.c'],
+                               libraries=[]),
+                    ],
       cmdclass = {'install' : Install})
