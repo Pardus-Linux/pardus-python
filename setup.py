@@ -17,6 +17,8 @@ distfiles = """
     pardus/*.c
     pardus/xorg/*.py
     pardus/xorg/*.c
+    po/*.po
+    po/*.pot
     tools/*.py
     MODULES
     README
@@ -52,9 +54,24 @@ class Install(install):
             self.install_platlib = '$base/lib/pardus'
             self.install_purelib = '$base/lib/pardus'
         install.finalize_options(self)
-    
+
     def run(self):
         install.run(self)
+        self.installi18n()
+
+    def installi18n(self):
+        for name in os.listdir('po'):
+            if not name.endswith('.po'):
+                continue
+            lang = name[:-3]
+            print "Installing '%s' translations..." % lang
+            os.popen("msgfmt po/%s.po -o po/%s.mo" % (lang, lang))
+            if not self.root:
+                self.root = "/"
+            destpath = os.path.join(self.root, "usr/share/locale/%s/LC_MESSAGES" % lang)
+            if not os.path.exists(destpath):
+                os.makedirs(destpath)
+            shutil.copy("po/%s.mo" % lang, os.path.join(destpath, "pardus-python.mo"))
 
 setup(name="pardus",
       version=pardus.versionString(),
