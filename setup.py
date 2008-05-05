@@ -20,6 +20,7 @@ distfiles = """
     po/*.po
     po/*.pot
     tools/*.py
+    tools/*.sh
     MODULES
     README
 """
