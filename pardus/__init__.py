@@ -10,7 +10,7 @@
 # Please read the COPYING file.
 #
 
-__version__ = "0.2"
+__version__ = "0.3"
 
 __all__ = ["csapi",
            "deviceutils",
@@ -18,6 +18,7 @@ __all__ = ["csapi",
            "fileutils",
            "grubutils",
            "iniutils",
+           "localedata",
            "netutils",
            "netfilterutils",
            "shellutils",
