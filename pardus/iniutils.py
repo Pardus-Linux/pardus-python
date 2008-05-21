@@ -24,7 +24,6 @@ class iniDB:
         except OSError:
             pass
         self.db_file = db_file
-        self.lock_file = os.path.join(os.path.dirname(db_file), '.%s' % os.path.basename(db_file))
         if not os.path.exists(db_file):
             self.__writelock()
             file(db_file, "w").close()
@@ -36,11 +35,11 @@ class iniDB:
         self.__unlock()
 
     def __writelock(self):
-        self.fl = FileLock(self.lock_file)
+        self.fl = FileLock(self.db_file)
         self.fl.lock(shared=False)
 
     def __readlock(self):
-        self.fl = FileLock(self.lock_file)
+        self.fl = FileLock(self.db_file)
         self.fl.lock(shared=True)
 
     def __unlock(self):
