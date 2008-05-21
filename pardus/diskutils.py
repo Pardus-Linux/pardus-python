@@ -26,7 +26,7 @@ class EDD:
     def blockDevices(self):
         devices = []
         for sysfs_dev in os.listdir("/sys/block"):
-            if filter(lambda x: fnmatch.fnmatch(sysfs_dev, x), ["fd*", "loop*", "ram*"]):
+            if filter(lambda x: fnmatch.fnmatch(sysfs_dev, x), ["fd*", "loop*", "ram*", "sr*"]):
                 continue
             dev_name = os.path.basename(sysfs_dev)
             dev_name = dev_name.replace("!", "/")
