@@ -113,8 +113,16 @@ class IF:
             for item in os.listdir(path):
                 if ":" in item:
                     path2 = "device/bus/devices/%s" % item.split(":", 1)[0]
-                    vendor = remHex(self.sysValue(path2 + "/idVendor"))
-                    device = remHex(self.sysValue(path2 + "/idProduct"))
+                    try:
+                        vendor = remHex(self.sysValue(path2 + "/idVendor"))
+                        device = remHex(self.sysValue(path2 + "/idProduct"))
+                    except:
+                        product = "0/0/0"
+                        for line in self.sysValue("device/uevent").split("\n"):
+                            if line.startswith("PRODUCT="):
+                                product = line.split("=")[1]
+                        vendor = product.split("/")[0]
+                        device = product.split("/")[1]
                     return "usb:%s_%s_%s" % (vendor, device, self.name)
         
         return "%s:%s" % (type, self.name)
