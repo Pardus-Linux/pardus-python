@@ -236,6 +236,7 @@ class IF:
         class AutoInfo:
             servers = None
             search = None
+            gateways = None
             
         info_file = self.autoInfoFile()
         try:
@@ -254,6 +255,8 @@ class IF:
                 info.search = line[11:].rstrip('\n').rstrip("'").split(' ')
             elif line.startswith("DNSDOMAIN='"):
                 info.search = line[11:].rstrip('\n').rstrip("'").split(' ')
+            elif line.startswith("GATEWAYS='"):
+                info.gateways = line[10:].rstrip('\n').rstrip("'").split(' ')
         return info
     
     def autoNameServers(self):
@@ -266,6 +269,11 @@ class IF:
         if info and info.search:
             return "".join(info.search)
         return ""
+
+    def autoGateways(self):
+        info = self.autoInfo()
+        if info and info.gateways and info.gateways[0]:
+            return info.gateways
 
 def interfaces():
     """Iterate over available network interfaces"""
