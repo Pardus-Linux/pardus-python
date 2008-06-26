@@ -58,6 +58,12 @@ languages = {
         locale              = "en_US.UTF-8"
     ),
 
+    "en_GB":    Language(
+        name                = _("English GB"),
+        locale              = "en_GB.UTF-8",
+        keymaps             = [Keymap("uk", "gb")]
+    ),
+
     "af":   Language(
         name                = _("Afrikaans"),
         locale              = "af_ZA.UTF-8",
@@ -134,12 +140,6 @@ languages = {
         name                = _("French"),
         locale              = "fr_FR.UTF-8",
         keymaps             = [Keymap("fr-latin1", "fr")]
-    ),
-
-    "gb":   Language(
-        name                = _("English GB"),
-        locale              = "en_GB.UTF-8",
-        keymaps             = [Keymap("uk", "gb")]
     ),
 
     "gr":   Language(
