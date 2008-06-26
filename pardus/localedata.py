@@ -136,6 +136,12 @@ languages = {
         keymaps             = [Keymap("fr-latin1", "fr")]
     ),
 
+    "gb":   Language(
+        name                = _("English GB"),
+        locale              = "en_GB.UTF-8",
+        keymaps             = [Keymap("uk", "gb")]
+    ),
+
     "gr":   Language(
         name                = _("Greek"),
         locale              = "el_GR.UTF-8",
