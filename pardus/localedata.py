@@ -82,12 +82,6 @@ languages = {
         keymaps             = [Keymap("bg")]
     ),
 
-    "br":   Language(
-        name                = _("Brazilian"),
-        locale              = "pt_BR.UTF-8",
-        keymaps             = [Keymap("br-abnt2", "br")]
-    ),
-
     "ca":   Language(
         name                = _("Catalan"),
         locale              = "ca_ES.UTF-8",
@@ -212,6 +206,12 @@ languages = {
         name                = _("Portuguese"),
         locale              = "pt_PT.UTF-8",
         keymaps             = [Keymap("pt-latin1", "pt")]
+    ),
+
+    "pt_BR":   Language(
+        name                = _("Brazilian"),
+        locale              = "pt_BR.UTF-8",
+        keymaps             = [Keymap("br-abnt2", "br")]
     ),
 
     "ru":   Language(
