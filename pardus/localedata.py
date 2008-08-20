@@ -18,7 +18,7 @@ __trans = gettext.translation('pardus-python', fallback=True)
 _ = __trans.ugettext
 
 class Keymap:
-    def __init__(self, console_layout, xkb_layout=None, xkb_variant="basic", name=None):
+    def __init__(self, console_layout, xkb_layout=None, xkb_variant="", name=None):
         self.console_layout = console_layout
         self.xkb_layout = xkb_layout or console_layout
         self.xkb_variant = xkb_variant
