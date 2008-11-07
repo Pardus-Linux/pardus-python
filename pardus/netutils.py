@@ -220,6 +220,11 @@ class IF:
         if subprocess.call(["/sbin/dhcpcd", "-k", self.name], stderr=file("/dev/null")):
             subprocess.call(["pkill","-f","%s" % " ".join(self.autoCmd)])
 
+        try:
+            os.unlink("/var/lib/dhcpcd/dhcpcd-%s.info" % self.name)
+        except OSError:
+            pass
+
     def isAuto(self):
         path = "/var/run/dhcpcd-%s.pid" % self.name
         if not os.path.exists(path):
