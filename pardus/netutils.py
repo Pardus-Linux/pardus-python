@@ -204,6 +204,11 @@ class IF:
         return None
     
     def startAuto(self):
+        try:
+            os.unlink("/var/lib/dhcpcd/dhcpcd-%s.info" % self.name)
+        except OSError, e:
+            pass
+
         if self.isAuto():
             self.stopAuto()
             import time
@@ -219,11 +224,6 @@ class IF:
         # an ip address so dhcpcd -k does not work while cancelling
         if subprocess.call(["/sbin/dhcpcd", "-k", self.name], stderr=file("/dev/null")):
             subprocess.call(["pkill","-f","%s" % " ".join(self.autoCmd)])
-
-        try:
-            os.unlink("/var/lib/dhcpcd/dhcpcd-%s.info" % self.name)
-        except OSError:
-            pass
 
     def isAuto(self):
         path = "/var/run/dhcpcd-%s.pid" % self.name
