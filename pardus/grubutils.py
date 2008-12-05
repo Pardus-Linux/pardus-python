@@ -81,6 +81,7 @@ class grubConf:
     
     def __parseLine__(self, line):
         """Parses single grub.conf line and returns a tupple of key, value and options."""
+        line = line.replace("\t"," ")
         line = line.strip()
         try:
             key, data = line.split(" ", 1)
@@ -113,7 +114,7 @@ class grubConf:
         entry = None
         
         for line in file(filename):
-            if not line.strip():
+            if not line.strip() or line.startswith("#"):
                 continue
             key, value, opts = self.__parseLine__(line)
             
