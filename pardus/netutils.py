@@ -166,8 +166,12 @@ class IF:
     
     def getAddress(self):
         result = self._call(SIOCGIFADDR)
+        if not result:
+            return None
         addr = socket.inet_ntoa(result[20:24])
         result = self._call(SIOCGIFNETMASK)
+        if not result:
+            return None
         mask = socket.inet_ntoa(result[20:24])
         return (addr, mask)
     
