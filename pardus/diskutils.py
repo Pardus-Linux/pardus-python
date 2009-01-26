@@ -16,6 +16,7 @@ import binascii
 import fnmatch
 import struct
 import os
+import subprocess
 
 class EDD:
     def __init__(self):
@@ -76,3 +77,69 @@ class EDD:
             except IOError:
                 pass
         return sigs
+
+class DeviceException(Exception):
+    pass
+
+def getDeviceMap():
+    subprocess.call(["/sbin/modprobe", "edd"])
+
+    edd = EDD()
+    mbr_list = edd.list_mbr_signatures()
+    edd_list = edd.list_edd_signatures()
+
+    edd_keys = edd_list.keys()
+    edd_keys.sort()
+
+    devices = []
+
+    i = 0
+    for bios_num in edd_keys:
+        edd_sig = edd_list[bios_num]
+        devices.append(("hd%s" % i, mbr_list[edd_sig],))
+        i += 1
+
+    return devices
+
+def parseLinuxDevice(device):
+    for grub_disk, linux_disk in getDeviceMap():
+        if device.startswith(linux_disk):
+            part = device.replace(linux_disk, "", 1)
+            if part:
+                if part.startswith("p"):
+                    grub_part = int(part[1:]) - 1
+                else:
+                    grub_part = int(part) - 1
+                return linux_disk, part, grub_disk, grub_part
+    return False
+
+def parseGrubDevice(device):
+    try:
+        disk, part = device.split(",")
+    except ValueError:
+        return False
+    disk = disk[1:]
+    part = part[:-1]
+    if not part.isdigit():
+        return False
+    for grub_disk, linux_disk in getDeviceMap():
+        if disk == grub_disk:
+            linux_part = int(part) + 1
+            if linux_disk[-1].isdigit():
+                linux_part = "p%s" % linux_part
+            return grub_disk, part, linux_disk, linux_part
+    return False
+
+def grubAddress(device):
+    try:
+        linux_disk, linux_part, grub_disk, grub_part = parseLinuxDevice(device)
+    except (ValueError, TypeError):
+        raise DeviceException, "No such device: %s" % device
+    return "(%s,%s)" % (grub_disk, grub_part)
+
+def linuxAddress(device):
+    try:
+        grub_disk, grub_part, linux_disk, linux_part = parseGrubDevice(device)
+    except (ValueError, TypeError):
+        raise DeviceException, "No such device: %s" % device
+    return "%s%s" % (linux_disk, linux_part)
