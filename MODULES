@@ -51,6 +51,8 @@ sysutils module provides basic system utilities.
 find_executable (exec_name)
 find the given executable in PATH
 
+getKernelOption (option)
+Get a dictionary of args for the given kernel command line option
 
 
 Module 'pardus.xorg'
