@@ -247,6 +247,7 @@ languages = {
     "sv":   Language(
         name                = _("Swedish"),
         locale              = "sv_SE.UTF-8",
+        console_font        = "lat0-16",
         keymaps             = [Keymap("sv-latin1", "se")]
     ),
 
