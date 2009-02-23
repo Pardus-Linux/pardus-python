@@ -30,7 +30,7 @@ def find_executable(exec_name):
 
     return None
 
-def getKernelOption(option):
+def get_kernel_option(option):
     """Get a dictionary of args for the given kernel command line option"""
 
     try:
