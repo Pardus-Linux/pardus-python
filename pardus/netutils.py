@@ -84,30 +84,30 @@ class IF:
         except IOError:
             return None
         return result
-    
+
     def sysValue(self, name):
         path = os.path.join("/sys/class/net", self.name, name)
         if os.path.exists(path):
             return file(path).read().rstrip("\n")
         else:
             return None
-    
+
     def deviceUID(self):
         def remHex(str):
             if str.startswith("0x"):
                 str = str[2:]
             return str
-        
+
         modalias = self.sysValue("device/modalias")
         if not modalias:
             return "logic:%s" % self.name
         type, rest = modalias.split(":", 1)
-        
+
         if type == "pci":
             vendor = remHex(self.sysValue("device/vendor"))
             device = remHex(self.sysValue("device/device"))
             return "pci:%s_%s_%s" % (vendor, device, self.name)
-        
+
         if type == "usb":
             path = os.path.join("/sys/class/net", self.name, "device/driver")
             for item in os.listdir(path):
@@ -124,9 +124,9 @@ class IF:
                         vendor = product.split("/")[0]
                         device = product.split("/")[1]
                     return "usb:%s_%s_%s" % (vendor, device, self.name)
-        
+
         return "%s:%s" % (type, self.name)
-    
+
     def isEthernet(self):
         type = self.sysValue("type")
         try:
@@ -134,7 +134,7 @@ class IF:
         except ValueError:
             return False
         return type == ARPHRD_ETHER
-    
+
     def isWireless(self):
         data = file("/proc/net/wireless").readlines()
         for line in data[2:]:
@@ -142,19 +142,19 @@ class IF:
             if name == self.name:
                 return True
         return False
-    
+
     def isUp(self):
         result = self._call(SIOCGIFFLAGS)
         flags, = struct.unpack('H', result[16:18])
         return (flags & IFF_UP) != 0
-    
+
     def up(self):
         ifreq = (self.name + '\0' * 16)[:16]
         flags = IFF_UP | IFF_RUNNING | IFF_BROADCAST | IFF_MULTICAST
         data = struct.pack("16sh", ifreq, flags)
         result = self.ioctl(SIOCSIFFLAGS, data)
         return result
-    
+
     def down(self):
         ifreq = (self.name + '\0' * 16)[:16]
         result = self._call(SIOCGIFFLAGS)
@@ -163,7 +163,7 @@ class IF:
         data = struct.pack("16sh", ifreq, flags)
         result = self.ioctl(SIOCSIFFLAGS, data)
         return result
-    
+
     def getAddress(self):
         result = self._call(SIOCGIFADDR)
         if not result:
@@ -174,7 +174,7 @@ class IF:
             return None
         mask = socket.inet_ntoa(result[20:24])
         return (addr, mask)
-    
+
     def setAddress(self, address=None, mask=None):
         if address:
             result = self._call(SIOCSIFADDR, address)
@@ -185,20 +185,20 @@ class IF:
             if not result:
                 return False
         return True
-    
+
     def getStats(self):
         tx_b = self.sysValue("statistics/tx_bytes")
         rx_b = self.sysValue("statistics/rx_bytes")
         tx_e = self.sysValue("statistics/tx_errors")
         rx_e = self.sysValue("statistics/rx_errors")
         return (tx_b, rx_b, tx_e, rx_e)
-    
+
     def getMAC(self):
         return self.sysValue("address")
-    
+
     def getMTU(self):
         return self.sysValue("mtu")
-    
+
     def setMTU(self, mtu):
         ifreq = (self.name + '\0' * 16)[:16]
         data = struct.pack("16si", ifreq, mtu)
@@ -206,7 +206,7 @@ class IF:
         if struct.unpack("16si", result)[1] is mtu:
             return True
         return None
-    
+
     def startAuto(self):
         try:
             os.unlink("/var/lib/dhcpcd/dhcpcd-%s.info" % self.name)
@@ -215,7 +215,6 @@ class IF:
 
         if self.isAuto():
             self.stopAuto()
-            import time
             tt = 5
             while tt > 0 and self.isAuto():
                 time.sleep(0.2)
@@ -237,22 +236,22 @@ class IF:
         if not os.path.exists("/proc/%s" % pid):
             return False
         return True
-    
+
     def autoInfoFile(self):
         return "/var/lib/dhcpcd/dhcpcd-" + self.name + ".info"
-    
+
     def autoInfo(self):
         class AutoInfo:
             servers = None
             search = None
             gateways = None
-            
+
         info_file = self.autoInfoFile()
         try:
             f = file(info_file)
         except IOError:
             return None
-        
+
         info = AutoInfo()
         for line in f:
             line = line.strip()
@@ -267,7 +266,7 @@ class IF:
             elif line.startswith("GATEWAYS='"):
                 info.gateways = line[10:].rstrip('\n').rstrip("'").split(' ')
         return info
-    
+
     def autoNameServers(self):
         info = self.autoInfo()
         if info:
@@ -332,10 +331,10 @@ class Route:
             pardus.csapi.changeroute(SIOCDELRT, gw, dst, mask)
         except:
             pass
-    
+
     def deleteDefault(self):
         self.delete("0.0.0.0")
-    
+
     def setDefault(self, gw, dst = "0.0.0.0", mask = "0.0.0.0"):
         # We must delete previous default gateway and route entry set for gateway
         # or we will end up with multiple entries
