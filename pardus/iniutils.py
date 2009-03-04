@@ -31,7 +31,10 @@ class iniDB:
             self.__unlock()
         self.__readlock()
         self.cp = ConfigParser.ConfigParser()
-        self.cp.read(db_file)
+        try:
+            self.cp.read(db_file)
+        except:
+            print "Network configuration file %s is corrupt" % db_file
         self.__unlock()
 
     def __writelock(self):
