@@ -33,13 +33,12 @@ def find_executable(exec_name):
 def get_kernel_option(option):
     """Get a dictionary of args for the given kernel command line option"""
 
+    args = {}
+
     try:
         cmdline = open("/proc/cmdline").read().split()
     except IOError:
-        return None
-
-    args = {}
-    found = False
+        return args
 
     for cmd in cmdline:
         if "=" in cmd:
@@ -49,8 +48,6 @@ def get_kernel_option(option):
             optArgs = ""
 
         if optName == option:
-            found = True
-
             for arg in optArgs.split(","):
                 if ":" in arg:
                     k, v = arg.split(":", 1)
@@ -58,4 +55,4 @@ def get_kernel_option(option):
                 else:
                     args[arg] = ""
 
-    return args if found else None
+    return args
