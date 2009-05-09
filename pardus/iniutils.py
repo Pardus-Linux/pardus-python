@@ -88,3 +88,122 @@ class iniDB:
         self.cp.write(fp)
         fp.close()
         self.__unlock()
+
+class iniParserError(Exception):
+    """
+        Base exception for iniParser errors.
+    """
+    pass
+
+class iniParser:
+    """
+        INI file parsing and manipulation class.
+
+        ip = iniParser("my.ini", [chmod=0600])
+        ip.listSections() => ["section1", "section2", ...]
+        ip.getSection("section1") => {"field1": "value1", "field2": "value2"}
+        ip.setSection("section1",{"field1": "value1", "field2": "value2"})
+        ip.removeSection("section2")
+
+    """
+
+    def __init__(self, inifile, chmod=0600):
+        """
+            Constuctor. Creates INI file if it doesn't exist and sets file mode.
+        """
+        self.inifile = inifile
+        self.chmod = chmod
+        try:
+            os.makedirs(os.path.dirname(inifile))
+        except OSError:
+            pass
+        self.__writeLock()
+        open(inifile, "w").close()
+        os.chmod(inifile, chmod)
+        self.__unlock()
+
+    def __writeLock(self):
+        """
+            Puts a write lock to file.
+        """
+        self.fl = FileLock(self.inifile)
+        self.fl.lock(shared=False)
+
+    def __readLock(self):
+        """
+            Puts a read lock to file.
+        """
+        self.fl = FileLock(self.inifile)
+        self.fl.lock(shared=True)
+
+    def __unlock(self):
+        """
+            Removes lock from file.
+        """
+        self.fl.unlock()
+
+    def __readIni(self):
+        """
+            Gets content of the INI.
+        """
+        self.__readLock()
+        ini = ConfigParser.ConfigParser()
+        try:
+            ini.read(self.inifile)
+        except ConfigParser.Error:
+            ini = None
+        self.__unlock()
+        if not ini:
+            raise iniParserError, "File is corrupt: %s" % self.inifile
+        return ini
+
+    def __writeIni(self, ini):
+        """
+            Writes INI to file.
+        """
+        self.__writeLock()
+        fp = open(self.inifile, "w")
+        ini.write(fp)
+        fp.close()
+        self.__unlock()
+
+    def listSections(self):
+        """
+            Lists sections of INI file.
+        """
+        ini = self.__readIni()
+        return ini.sections()
+
+    def getSection(self, section):
+        """
+            Returns a section of INI file.
+        """
+        ini = self.__readIni()
+        if section not in ini.sections():
+            return None
+        dct = {}
+        if section in ini.sections():
+            dct = dict(ini.items(section))
+        return dct
+
+    def setSection(self, section, dct):
+        """
+            Sets a section of INI file.
+        """
+        ini = self.__readIni()
+        if section not in ini.sections():
+            ini.add_section(section)
+        for key, value in dct.iteritems():
+            if value:
+                ini.set(section, key, value)
+            elif section in ini.sections():
+                ini.remove_option(section, key)
+        self.__writeIni(ini)
+
+    def removeSection(self, section):
+        """
+            Removes a section from INI file.
+        """
+        ini = self.__readIni()
+        ini.remove_section(section)
+        self.__writeIni(ini)
