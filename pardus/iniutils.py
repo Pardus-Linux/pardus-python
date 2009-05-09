@@ -68,6 +68,13 @@ class iniDB:
                 self.cp.set(name, key, value)
             elif name in self.cp.sections():
                 self.cp.remove_option(name, key)
+        # FIXME: This is an ugly hack...
+        db = iniDB(self.db_file)
+        for nm in db.listDB():
+            if nm == name:
+                continue
+            for key, value in db.getDB(nm).iteritems():
+                self.cp.set(nm, key, value)
         self.__writelock()
         fp = open(self.db_file, "w")
         self.cp.write(fp)
