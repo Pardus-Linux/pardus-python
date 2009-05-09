@@ -117,7 +117,7 @@ class iniParser:
             os.makedirs(os.path.dirname(inifile))
         except OSError:
             pass
-        if not os.path.exists():
+        if not os.path.exists(inifile):
             self.__writeLock()
             open(inifile, "w").close()
             self.__unlock()
