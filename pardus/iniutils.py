@@ -117,10 +117,11 @@ class iniParser:
             os.makedirs(os.path.dirname(inifile))
         except OSError:
             pass
-        self.__writeLock()
-        open(inifile, "w").close()
+        if not os.path.exists():
+            self.__writeLock()
+            open(inifile, "w").close()
+            self.__unlock()
         os.chmod(inifile, chmod)
-        self.__unlock()
 
     def __writeLock(self):
         """
