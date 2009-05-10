@@ -181,7 +181,7 @@ class iniParser:
         """
         ini = self.__readIni()
         if section not in ini.sections():
-            return None
+            return {}
         dct = {}
         if section in ini.sections():
             dct = dict(ini.items(section))
