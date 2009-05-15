@@ -147,39 +147,41 @@ class iniParser:
         """
             Gets content of the INI.
         """
-        self.__readLock()
         ini = ConfigParser.ConfigParser()
         try:
             ini.read(self.inifile)
         except ConfigParser.Error:
             ini = None
-        self.__unlock()
-        if not ini:
-            raise iniParserError, "File is corrupt: %s" % self.inifile
         return ini
 
     def __writeIni(self, ini):
         """
             Writes INI to file.
         """
-        self.__writeLock()
         fp = open(self.inifile, "w")
         ini.write(fp)
         fp.close()
-        self.__unlock()
 
     def listSections(self):
         """
             Lists sections of INI file.
         """
+        self.__readLock()
         ini = self.__readIni()
+        self.__unlock()
+        if not ini:
+            raise iniParserError, "File is corrupt: %s" % self.inifile
         return ini.sections()
 
     def getSection(self, section):
         """
             Returns a section of INI file.
         """
+        self.__readLock()
         ini = self.__readIni()
+        self.__unlock()
+        if not ini:
+            raise iniParserError, "File is corrupt: %s" % self.inifile
         if section not in ini.sections():
             return {}
         dct = {}
@@ -191,7 +193,11 @@ class iniParser:
         """
             Sets a section of INI file.
         """
+        self.__writeLock()
         ini = self.__readIni()
+        if not ini:
+            self.__unlock()
+            raise iniParserError, "File is corrupt: %s" % self.inifile
         if section not in ini.sections():
             ini.add_section(section)
         for key, value in dct.iteritems():
@@ -200,11 +206,17 @@ class iniParser:
             elif section in ini.sections():
                 ini.remove_option(section, key)
         self.__writeIni(ini)
+        self.__unlock()
 
     def removeSection(self, section):
         """
             Removes a section from INI file.
         """
+        self.__writeLock()
         ini = self.__readIni()
+        if not ini:
+            self.__unlock()
+            raise iniParserError, "File is corrupt: %s" % self.inifile
         ini.remove_section(section)
         self.__writeIni(ini)
+        self.__unlock()
