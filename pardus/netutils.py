@@ -16,7 +16,6 @@ import os
 import socket
 import fcntl
 import struct
-import glob
 import subprocess
 import time
 import pardus.csapi
@@ -93,22 +92,22 @@ class IF:
             return None
 
     def deviceUID(self):
-        def remHex(str):
-            if str.startswith("0x"):
-                str = str[2:]
-            return str
+        def remHex(s):
+            if s.startswith("0x"):
+                s = s[2:]
+            return s
 
         modalias = self.sysValue("device/modalias")
         if not modalias:
             return "logic:%s" % self.name
-        type, rest = modalias.split(":", 1)
+        bustype, rest = modalias.split(":", 1)
 
-        if type == "pci":
+        if bustype == "pci":
             vendor = remHex(self.sysValue("device/vendor"))
             device = remHex(self.sysValue("device/device"))
             return "pci:%s_%s_%s" % (vendor, device, self.name)
 
-        if type == "usb":
+        if bustype == "usb":
             path = os.path.join("/sys/class/net", self.name, "device/driver")
             for item in os.listdir(path):
                 if ":" in item:
@@ -125,15 +124,15 @@ class IF:
                         device = product.split("/")[1]
                     return "usb:%s_%s_%s" % (vendor, device, self.name)
 
-        return "%s:%s" % (type, self.name)
+        return "%s:%s" % (bustype, self.name)
 
     def isEthernet(self):
-        type = self.sysValue("type")
+        nettype = self.sysValue("type")
         try:
-            type = int(type)
+            nettype = int(nettype)
         except ValueError:
             return False
-        return type == ARPHRD_ETHER
+        return nettype == ARPHRD_ETHER
 
     def isWireless(self):
         data = file("/proc/net/wireless").readlines()
@@ -210,7 +209,7 @@ class IF:
     def startAuto(self):
         try:
             os.unlink("/var/lib/dhcpcd/dhcpcd-%s.info" % self.name)
-        except OSError, e:
+        except OSError:
             pass
 
         if self.isAuto():
@@ -312,9 +311,9 @@ def findInterface(devuid):
 def deviceName(devuid):
     """Return product/manufacturer name for given device unique id"""
     if devuid.startswith("pci:") or devuid.startswith("usb:"):
-        type, rest = devuid.split(":", 1)
+        bustype, rest = devuid.split(":", 1)
         vendor, device, dev = rest.split("_", 2)
-        if type == "pci":
+        if bustype == "pci":
             data = "/usr/share/misc/pci.ids"
         else:
             data = "/usr/share/misc/usb.ids"
