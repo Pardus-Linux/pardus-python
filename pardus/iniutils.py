@@ -99,7 +99,7 @@ class iniParser:
     """
         INI file parsing and manipulation class.
 
-        ip = iniParser("my.ini", [chmod=0600])
+        ip = iniParser("my.ini", [chmod=0600, [quiet=False]])
         ip.listSections() => ["section1", "section2", ...]
         ip.getSection("section1") => {"field1": "value1", "field2": "value2"}
         ip.setSection("section1",{"field1": "value1", "field2": "value2"})
@@ -107,12 +107,13 @@ class iniParser:
 
     """
 
-    def __init__(self, inifile, chmod=0600):
+    def __init__(self, inifile, chmod=0600, quiet=False):
         """
             Constuctor. Creates INI file if it doesn't exist and sets file mode.
         """
         self.inifile = inifile
         self.chmod = chmod
+        self.quiet = quiet
         try:
             os.makedirs(os.path.dirname(inifile))
         except OSError:
@@ -170,7 +171,11 @@ class iniParser:
         ini = self.__readIni()
         self.__unlock()
         if not ini:
-            raise iniParserError, "File is corrupt: %s" % self.inifile
+            if self.quiet:
+                self.__fixIniFile()
+                return []
+            else:
+                raise iniParserError, "File is corrupt: %s" % self.inifile
         return ini.sections()
 
     def getSection(self, section):
@@ -181,7 +186,11 @@ class iniParser:
         ini = self.__readIni()
         self.__unlock()
         if not ini:
-            raise iniParserError, "File is corrupt: %s" % self.inifile
+            if self.quiet:
+                self.__fixIniFile()
+                return {}
+            else:
+                raise iniParserError, "File is corrupt: %s" % self.inifile
         if section not in ini.sections():
             return {}
         dct = {}
@@ -197,7 +206,12 @@ class iniParser:
         ini = self.__readIni()
         if not ini:
             self.__unlock()
-            raise iniParserError, "File is corrupt: %s" % self.inifile
+            if self.quiet:
+                self.__fixIniFile()
+                self.setSection(section, dct)
+                return
+            else:
+                raise iniParserError, "File is corrupt: %s" % self.inifile
         if section not in ini.sections():
             ini.add_section(section)
         for key, value in dct.iteritems():
@@ -216,7 +230,19 @@ class iniParser:
         ini = self.__readIni()
         if not ini:
             self.__unlock()
-            raise iniParserError, "File is corrupt: %s" % self.inifile
+            if self.quiet:
+                self.__fixIniFile()
+                return
+            else:
+                raise iniParserError, "File is corrupt: %s" % self.inifile
         ini.remove_section(section)
         self.__writeIni(ini)
+        self.__unlock()
+
+    def __fixIniFile(self):
+        """
+            Cleans bogus ini file.
+        """
+        self.__writeLock()
+        open(self.inifile, "w").write("")
         self.__unlock()
