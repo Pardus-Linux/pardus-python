@@ -130,7 +130,7 @@ class IF:
         nettype = self.sysValue("type")
         try:
             nettype = int(nettype)
-        except ValueError:
+        except (ValueError, TypeError):
             return False
         return nettype == ARPHRD_ETHER
 
