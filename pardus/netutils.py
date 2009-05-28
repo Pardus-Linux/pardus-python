@@ -192,6 +192,9 @@ class IF:
         rx_e = self.sysValue("statistics/rx_errors")
         return (tx_b, rx_b, tx_e, rx_e)
 
+    def getSignalQuality(self):
+        return self.sysValue("wireless/link")
+
     def getMAC(self):
         return self.sysValue("address")
 
