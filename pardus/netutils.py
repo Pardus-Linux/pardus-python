@@ -65,7 +65,7 @@ class IF:
         # -H to set hostname due to info from server
         # -t for timeout
 
-        self.autoCmd = ["/sbin/dhcpcd", "-R", "-Y", "-N", self.name, "-t", self.timeout]
+        self.autoCmd = ["/sbin/dhcpcd", "-R", "-Y", "-N", self.name, "-t", self.timeout, "-I", "''"]
 
     def ioctl(self, func, args):
         if not self._sock:
