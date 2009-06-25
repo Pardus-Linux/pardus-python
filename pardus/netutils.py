@@ -151,7 +151,10 @@ class IF:
         ifreq = (self.name + '\0' * 16)[:16]
         flags = IFF_UP | IFF_RUNNING | IFF_BROADCAST | IFF_MULTICAST
         data = struct.pack("16sh", ifreq, flags)
-        result = self.ioctl(SIOCSIFFLAGS, data)
+        try:
+            result = self.ioctl(SIOCSIFFLAGS, data)
+        except IOError:
+            return None
         return result
 
     def down(self):
@@ -160,7 +163,10 @@ class IF:
         flags, = struct.unpack('H', result[16:18])
         flags &= ~IFF_UP
         data = struct.pack("16sh", ifreq, flags)
-        result = self.ioctl(SIOCSIFFLAGS, data)
+        try:
+            result = self.ioctl(SIOCSIFFLAGS, data)
+        except IOError:
+            return None
         return result
 
     def getAddress(self):
@@ -204,7 +210,10 @@ class IF:
     def setMTU(self, mtu):
         ifreq = (self.name + '\0' * 16)[:16]
         data = struct.pack("16si", ifreq, mtu)
-        result = self.ioctl(SIOCSIFMTU, data)
+        try:
+            result = self.ioctl(SIOCSIFMTU, data)
+        except IOError:
+            return None
         if struct.unpack("16si", result)[1] is mtu:
             return True
         return None
