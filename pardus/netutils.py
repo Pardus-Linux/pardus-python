@@ -231,7 +231,7 @@ class IF:
                 time.sleep(0.2)
                 tt -= 0.2
 
-        return subprocess.call(self.autoCmd)
+        return os.system(" ".join(self.autoCmd))
 
     def stopAuto(self):
         # dhcpcd does not create a pid file until it gets 
