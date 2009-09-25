@@ -51,6 +51,7 @@ IFF_AUTOMEDIA = 0x4000      # Auto media select active.
 
 # From <linux/if_arp.h>
 ARPHRD_ETHER = 1
+ARPHRD_PPP = 512
 
 
 class IF:
@@ -133,6 +134,14 @@ class IF:
         except (ValueError, TypeError):
             return False
         return nettype == ARPHRD_ETHER
+
+    def isPPP(self):
+        nettype = self.sysValue("type")
+        try:
+            nettype = int(nettype)
+        except (ValueError, TypeError):
+            return False
+        return nettype == ARPHRD_PPP
 
     def isWireless(self):
         data = file("/proc/net/wireless").readlines()
