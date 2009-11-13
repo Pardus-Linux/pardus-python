@@ -66,7 +66,12 @@ class IF:
         # -H to set hostname due to info from server
         # -t for timeout
 
-        self.autoCmd = ["/sbin/dhcpcd", "-R", "-Y", "-N", self.name, "-t", self.timeout, "-I", "''"]
+        # Check dhcpcd version and generate option list according to it
+        self.autoCmd = ["/sbin/dhcpcd"]
+        if os.popen("/sbin/dhcpcd --version").read().split()[1] < "3.9.9":
+            self.autoCmd.extend(["-R", "-Y", "-N"])
+
+        self.autoCmd.extend([self.name, "-t", self.timeout, "-I", "''"])
 
     def ioctl(self, func, args):
         if not self._sock:
@@ -275,8 +280,8 @@ class IF:
         info = AutoInfo()
         for line in f:
             line = line.strip()
-            if line.startswith("DNS="):
-                info.servers = line[4:].rstrip('\n').split(',')
+            if line.startswith("DNS='"):
+                info.servers = line[5:].rstrip('\n').rstrip("'").split(',')
             elif line.startswith("DNSSERVERS='"):
                 info.servers = line[12:].rstrip('\n').rstrip("'").split(' ')
             elif line.startswith("DNSSEARCH='"):
