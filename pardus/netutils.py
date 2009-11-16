@@ -60,16 +60,19 @@ class IF:
         self.name = ifname
         self._sock = None
         self.timeout = "120"
+        self.dhcpcd_version = os.popen("/sbin/dhcpcd --version").read().split()[1]
 
-        # -R -Y -N to prevent dhcpcd rewrite nameservers
-        #          we should add nameservers, not rewrite them
-        # -H to set hostname due to info from server
-        # -t for timeout
+        # -R -Y -N to prevent dhcpcd rewrite nameservers (dhcpcd 3.x)
+        # -t for timeout  (dhcpcd 3.x, 5.x)
+        # -I for clientID (dhcpcd 3.x, 5.x)
 
         # Check dhcpcd version and generate option list according to it
         self.autoCmd = ["/sbin/dhcpcd"]
-        if os.popen("/sbin/dhcpcd --version").read().split()[1] < "3.9.9":
+        if self.dhcpcd_version < "3.9.9":
             self.autoCmd.extend(["-R", "-Y", "-N"])
+        elif self.dhcpcd_version.startswith("5."):
+            # Avoid receiving link messages for carrier status. Useful in buggy drivers
+            self.autoCmd.extend(["-K"])
 
         self.autoCmd.extend([self.name, "-t", self.timeout, "-I", "''"])
 
