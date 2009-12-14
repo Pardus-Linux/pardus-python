@@ -79,7 +79,7 @@ class grubConf:
         """Sets grub.conf header"""
         self.header = header.split("\n")
 
-    def __parseLine__(self, line):
+    def __parseLine(self, line):
         """Parses single grub.conf line and returns a tupple of key, value and options."""
         line = line.replace("\t"," ")
         line = line.strip()
@@ -116,7 +116,7 @@ class grubConf:
         for line in file(filename):
             if not line.strip() or line.startswith("#"):
                 continue
-            key, value, opts = self.__parseLine__(line)
+            key, value, opts = self.__parseLine(line)
 
             if key == "title":
                 option = False
