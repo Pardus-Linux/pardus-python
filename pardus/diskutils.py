@@ -78,68 +78,166 @@ class EDD:
                 pass
         return sigs
 
-class DeviceException(Exception):
-    pass
-
 def getDeviceMap():
+    """
+        Returns list of devices and their GRUB reprensentations.
+
+        Returns:
+            List of devices in ("hd0", "/dev/sda") format.
+    """
+
+    # edd module is required
     subprocess.call(["/sbin/modprobe", "edd"])
 
+    # get signatures
     edd = EDD()
     mbr_list = edd.list_mbr_signatures()
     edd_list = edd.list_edd_signatures()
 
+    # sort keys
     edd_keys = edd_list.keys()
     edd_keys.sort()
 
     devices = []
 
+    # build device map
     i = 0
     for bios_num in edd_keys:
         edd_sig = edd_list[bios_num]
-        devices.append(("hd%s" % i, mbr_list[edd_sig],))
-        i += 1
+        if edd_sig in mbr_list:
+            devices.append(("hd%s" % i, mbr_list[edd_sig]))
+            i += 1
 
     return devices
 
 def parseLinuxDevice(device):
+    """
+        Parses Linux device address and returns disk, partition and their GRUB representations.
+
+        Arguments:
+            device: Linux device address (e.g. "/dev/sda1")
+        Returns:
+            None on error, (LinuxDisk, PartNo, GrubDev, GrubPartNo) on success
+    """
+
     for grub_disk, linux_disk in getDeviceMap():
         if device.startswith(linux_disk):
             part = device.replace(linux_disk, "", 1)
             if part:
+                # If device address ends with a number,
+                # "p" is used before partition number
                 if part.startswith("p"):
                     grub_part = int(part[1:]) - 1
                 else:
                     grub_part = int(part) - 1
                 return linux_disk, part, grub_disk, grub_part
-    return False
+    return None
 
 def parseGrubDevice(device):
+    """
+        Parses GRUB device address and returns disk, partition and their Linux representations.
+
+        Arguments:
+            device: GRUB device address (e.g. "(hd0,0)")
+        Returns:
+            None on error, (GrubDev, GrubPartNo, LinuxDisk, PartNo) on success
+    """
+
     try:
         disk, part = device.split(",")
     except ValueError:
-        return False
+        return None
     disk = disk[1:]
     part = part[:-1]
     if not part.isdigit():
-        return False
+        return None
     for grub_disk, linux_disk in getDeviceMap():
         if disk == grub_disk:
             linux_part = int(part) + 1
+            # If device address ends with a number,
+            # "p" is used before partition number
             if linux_disk[-1].isdigit():
                 linux_part = "p%s" % linux_part
             return grub_disk, part, linux_disk, linux_part
-    return False
+    return None
 
 def grubAddress(device):
+    """
+        Translates Linux device address to GRUB address.
+
+        Arguments:
+            device: Linux device address (e.g. "/dev/sda1")
+        Returns:
+            None on error, GRUB device on success
+    """
+
     try:
         linux_disk, linux_part, grub_disk, grub_part = parseLinuxDevice(device)
     except (ValueError, TypeError):
-        raise DeviceException, "No such device: %s" % device
+        return None
     return "(%s,%s)" % (grub_disk, grub_part)
 
 def linuxAddress(device):
+    """
+        Translates GRUB device address to Linux address.
+
+        Arguments:
+            device: GRUB device address (e.g. "(hd0,0)")
+        Returns:
+            None on error, Linux device on success
+    """
+
     try:
         grub_disk, grub_part, linux_disk, linux_part = parseGrubDevice(device)
     except (ValueError, TypeError):
-        raise DeviceException, "No such device: %s" % device
+        return None
     return "%s%s" % (linux_disk, linux_part)
+
+def getDeviceByLabel(label):
+    """
+        Find Linux device address from it's label.
+
+        Arguments:
+            label: Device label
+        Returns:
+            None on error, Linux device on success
+    """
+
+    fn = os.path.join("/dev/disk/by-label/%s" % label)
+    if os.path.islink(fn):
+        return "/dev/%s" % os.readlink(fn)[6:]
+    else:
+        return None
+
+def getDeviceByUUID(uuid):
+    """
+        Find Linux device address from it's UUID.
+
+        Arguments:
+            uuid: Device UUID
+        Returns:
+            None on error, Linux device on success
+    """
+
+    fn = os.path.join("/dev/disk/by-uuid/%s" % uuid)
+    if os.path.islink(fn):
+        return "/dev/%s" % os.readlink(fn)[6:]
+    else:
+        return None
+
+def getRoot():
+    """
+        Gives current root device address.
+
+        Returns:
+            Device address (e.g. "/dev/sda1")
+    """
+
+    for mount in os.popen("/bin/mount").readlines():
+        mount_items = mount.split()
+        if mount_items[2] == "/":
+            if mount_items[0].startswith("/dev"):
+                return mount_items[0]
+            elif mount_items[0].startswith("LABEL="):
+                return getDeviceByLabel(mount_items[0].split('=',1)[1])
+
