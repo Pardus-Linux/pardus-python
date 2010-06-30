@@ -12,10 +12,9 @@
 
 """diskutils module provides EDD class to query device boot order."""
 
-import binascii
-import fnmatch
-import struct
 import os
+import struct
+import binascii
 import subprocess
 
 class EDD:
@@ -26,12 +25,11 @@ class EDD:
 
     def blockDevices(self):
         devices = []
-        for sysfs_dev in os.listdir("/sys/block"):
-            if filter(lambda x: fnmatch.fnmatch(sysfs_dev, x), ["fd*", "loop*", "ram*", "sr*"]):
-                continue
-            dev_name = os.path.basename(sysfs_dev)
-            dev_name = dev_name.replace("!", "/")
-            devices.append("/dev/" + dev_name)
+        for sysfs_dev in [dev for dev in os.listdir("/sys/block") \
+                if not dev.startswith(("fd", "loop", "ram", "sr"))]:
+                dev_name = os.path.basename(sysfs_dev).replace("!", "/")
+                devices.append("/dev/" + dev_name)
+
         devices.sort()
         return devices
 
@@ -239,5 +237,5 @@ def getRoot():
             if mount_items[0].startswith("/dev"):
                 return mount_items[0]
             elif mount_items[0].startswith("LABEL="):
-                return getDeviceByLabel(mount_items[0].split('=',1)[1])
+                return getDeviceByLabel(mount_items[0].split('=', 1)[1])
 
