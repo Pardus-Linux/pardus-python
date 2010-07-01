@@ -27,8 +27,8 @@ class EDD:
         devices = []
         for sysfs_dev in [dev for dev in os.listdir("/sys/block") \
                 if not dev.startswith(("fd", "loop", "ram", "sr"))]:
-                dev_name = os.path.basename(sysfs_dev).replace("!", "/")
-                devices.append("/dev/" + dev_name)
+            dev_name = os.path.basename(sysfs_dev).replace("!", "/")
+            devices.append("/dev/" + dev_name)
 
         devices.sort()
         return devices
