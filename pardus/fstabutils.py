@@ -14,6 +14,13 @@
 
 import os
 
+REMOTE_FS_LIST = [
+                    "nfs",
+                    "nfs4",
+                    "cifs",
+                    "ncpfs",
+                 ]
+
 def get_device_by_label(label):
     devpath = os.path.join("/dev/disk/by-label", label)
     device = None
@@ -130,9 +137,13 @@ fs_passno: %s
         """Returns True if the entry should be ignored."""
         return self.__entry_ignored
 
+    def is_remote_mount(self):
+        """Returns True if the entry corresponds to a remote mount."""
+        return self.get_file_system() in REMOTE_FS_LIST
+
     def is_mounted(self):
         """Returns True if the entry is currently mounted."""
-        # Parse /proc/mounts for maximum atomicity
+        # Always parse /proc/mounts for maximum atomicity
         for mount in open("/proc/mounts", "r").read().strip().split("\n"):
             if mount.split()[1] == self.__fs_file:
                 return True
