@@ -13,6 +13,7 @@
 """/etc/fstab parser facility."""
 
 import os
+import subprocess
 
 REMOTE_FS_LIST = [
                     "nfs",
@@ -108,15 +109,33 @@ fs_passno: %s
         cmd = ["/bin/mount"]
 
         # Append vfs type
-        cmd.append("-t %s" % self.get_fs_vfstype())
+        #cmd.append("-t %s" % self.get_fs_vfstype())
 
         # Append mount options
-        cmd.append("-o %s" % self.get_fs_mntopts())
+        #cmd.append("-o %s" % self.get_fs_mntopts())
 
-        cmd.append(self.get_fs_spec())
+        #cmd.append(self.get_fs_spec())
         cmd.append(self.get_fs_file())
 
+        print "CMD: %s" % cmd
         return cmd
+
+    def get_umount_command(self):
+        """Returns the UNIX command line for unmounting this entry."""
+        cmd = ["/bin/umount"]
+        cmd.append(self.get_fs_file())
+        print "CMD: %s" % cmd
+        return cmd
+
+    def mount(self):
+        """Mounts the given entry if not mounted."""
+        if not self.is_mounted():
+            return subprocess.call(self.get_mount_command())
+
+    def unmount(self):
+        """Unmounts the given entry if mounted."""
+        if self.is_mounted():
+            return subprocess.call(self.get_umount_command())
 
     def get_volume_label(self):
         return self.__volume_label
@@ -213,4 +232,3 @@ if __name__ == "__main__":
     fstab = Fstab()
     for entry in fstab.get_entries():
         print entry
-        print entry.get_mount_command()
