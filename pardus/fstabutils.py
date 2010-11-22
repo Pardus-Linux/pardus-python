@@ -58,10 +58,9 @@ class FstabEntry(object):
         fields = entry.strip().split()
 
         # If number of fields is < 6, either fs_freq or fs_passno is
-        # not given. So we omit them and provide the defaults written in
-        # fstab(5).
-        self.__fs_freq = 0
-        self.__fs_passno = 0
+        # not given. So we omit them first
+        self.__fs_freq = None
+        self.__fs_passno = None
 
         self.__fs_spec = fields[0]
         self.__fs_file = fields[1]
