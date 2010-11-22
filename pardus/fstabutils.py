@@ -103,27 +103,65 @@ fs_passno: %s
                     self.__fs_freq,
                     self.__fs_passno)
 
+    def get_mount_command(self):
+        """Returns the UNIX command line for mounting this entry."""
+        cmd = ["/bin/mount"]
+
+        """
+        # Append vfs type
+        cmd.append("-t %s" % self.get_fs_vfstype())
+
+        # Append mount options
+        cmd.append("-o %s" % self.get_fs_mntopts())
+
+        cmd.append(self.get_fs_spec())
+        """
+
+        # Giving only the mountpoint is sufficient.
+        cmd.append(self.get_fs_file())
+
+        return cmd
+
     def get_volume_label(self):
         return self.__volume_label
 
     def get_volume_uuid(self):
         return self.__volume_uuid
 
-    def get_device(self):
-        """Returns the device of the entry."""
-        return self.__device or self.__fs_spec
+    def get_device_path(self):
+        """Returns /dev/XXX like device path for the given entry."""
+        return self.__device
 
-    def get_mount_options(self):
-        """Returns the options given in fstab in a list."""
-        return self.__fs_mntopts.split(",")
+    def get_fs_spec(self):
+        """Returns the first field (fs_spec) of the entry."""
+        return self.__fs_spec
+
+    def get_fs_file(self):
+        """Returns the second field (fs_file) of the entry."""
+        return self.__fs_file
+
+    def get_fs_vfstype(self):
+        """Returns the third field (fs_vfstype) of the entry."""
+        return self.__fs_vfstype
+
+    def get_fs_mntopts(self, split=False):
+        """Returns the fourth field (fs_mntopts) of the entry."""
+        opts = self.__fs_mntopts
+        if split:
+            opts = opts.split(",")
+        return opts
+
+    def get_fs_freq(self):
+        """Returns the fifth field (fs_freq) of the entry."""
+        return self.__fs_freq
+
+    def get_fs_passno(self):
+        """Returns the sixth field (fs_passno) of the entry."""
+        return self.__fs_passno
 
     def has_mount_option(self, opt):
         """Checks whether the given option exists in fs_mntops."""
-        return opt in self.get_mount_options()
-
-    def get_file_system(self):
-        """Returns the filesystem vfs type."""
-        return self.__fs_vfstype
+        return opt in self.get_fs_mntopts(split=True)
 
     def is_swap_entry(self):
         """Returns True if the entry corresponds to a swap area."""
@@ -139,7 +177,7 @@ fs_passno: %s
 
     def is_remote_mount(self):
         """Returns True if the entry corresponds to a remote mount."""
-        return self.get_file_system() in REMOTE_FS_LIST
+        return self.get_fs_vfstype() in REMOTE_FS_LIST
 
     def is_mounted(self):
         """Returns True if the entry is currently mounted."""
@@ -161,10 +199,21 @@ class Fstab:
                 if entry and not entry.startswith("#"):
                     self.entries.append(FstabEntry(entry))
 
+    def get_entries(self):
+        """Returns fstab entries in a list."""
+        return self.entries
+
+    def contains_remoute_mounts(self):
+        """Returns True if the fstab file contains remote mounts."""
+        for entry in self.get_entries():
+            if entry.is_remote_mount():
+                return True
+        return False
+
 
 if __name__ == "__main__":
     # Test
     fstab = Fstab()
-    for entry in fstab.entries:
-        print "%s %s" % (entry.get_device(), "(mounted)" if \
-                entry.is_mounted() else "")
+    for entry in fstab.get_entries():
+        print entry
+        print entry.get_mount_command()
