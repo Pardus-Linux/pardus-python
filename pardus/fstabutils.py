@@ -107,7 +107,6 @@ fs_passno: %s
         """Returns the UNIX command line for mounting this entry."""
         cmd = ["/bin/mount"]
 
-        """
         # Append vfs type
         cmd.append("-t %s" % self.get_fs_vfstype())
 
@@ -115,9 +114,6 @@ fs_passno: %s
         cmd.append("-o %s" % self.get_fs_mntopts())
 
         cmd.append(self.get_fs_spec())
-        """
-
-        # Giving only the mountpoint is sufficient.
         cmd.append(self.get_fs_file())
 
         return cmd
