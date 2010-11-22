@@ -211,7 +211,6 @@ class Fstab:
         with open(self.fstab, "r") as fstab_entries:
             for entry in fstab_entries:
                 if entry.strip() and not entry.startswith("#"):
-                    print "** %s" % entry
                     self.entries.append(FstabEntry(entry))
 
     def get_entries(self):
