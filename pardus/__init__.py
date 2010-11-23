@@ -10,12 +10,13 @@
 # Please read the COPYING file.
 #
 
-__version__ = "0.4.5"
+__version__ = "0.4.6"
 
 __all__ = ["csapi",
            "deviceutils",
            "diskutils",
            "fileutils",
+           "fstabutils",
            "grubutils",
            "iniutils",
            "localedata",
