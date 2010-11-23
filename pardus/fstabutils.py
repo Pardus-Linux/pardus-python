@@ -210,17 +210,17 @@ class Fstab(object):
     """Class representing an fstab file."""
     def __init__(self, _fstab="/etc/fstab"):
         """Parses fstab file given as the first parameter."""
-        self.fstab = _fstab
-        self.entries = []
+        self.fstab_file = _fstab
+        self.__entries = []
 
-        with open(self.fstab, "r") as fstab_entries:
+        with open(self.fstab_file, "r") as fstab_entries:
             for entry in fstab_entries:
                 if entry.strip() and not entry.startswith("#"):
-                    self.entries.append(FstabEntry(entry))
+                    self.__entries.append(FstabEntry(entry))
 
     def get_entries(self):
         """Returns fstab entries in a list."""
-        return self.entries
+        return self.__entries
 
     def contains_remoute_mounts(self):
         """Returns True if the fstab file contains remote mounts."""
