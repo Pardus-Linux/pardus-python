@@ -224,6 +224,18 @@ class Fstab:
                 return True
         return False
 
+    def mount_file_systems_with_type(self, vfs_types):
+        """Mounts all file systems having a vfstype in [vfs_types] if not mounted."""
+        for entry in self.get_entries():
+            if not entry.is_mounted() and entry.get_fs_vfstype() in vfs_types:
+                entry.mount()
+
+    def unmount_file_systems_with_type(self, vfs_types):
+        """Unmounts all file systems having a vfstype in [vfs_types] if mounted."""
+        for entry in self.get_entries():
+            if entry.is_mounted() and entry.get_fs_vfstype() in vfs_types:
+                entry.unmount()
+
 
 if __name__ == "__main__":
     # Test
