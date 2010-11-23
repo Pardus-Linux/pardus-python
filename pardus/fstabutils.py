@@ -23,6 +23,7 @@ REMOTE_FS_LIST = [
                  ]
 
 def get_device_by_label(label):
+    """Returns the devpath associated with the given label."""
     devpath = os.path.join("/dev/disk/by-label", label)
     device = None
     try:
@@ -33,6 +34,7 @@ def get_device_by_label(label):
         return os.path.join("/dev", device)
 
 def get_device_by_uuid(uuid):
+    """Returns the devpath associated with the given UUID."""
     devpath = os.path.join("/dev/disk/by-uuid", uuid)
     device = None
     try:
@@ -44,6 +46,7 @@ def get_device_by_uuid(uuid):
 
 
 class FstabEntry(object):
+    """Class representing an fstab entry."""
     def __init__(self, entry):
         """
         fs: First field in fstab file which determines either the device or
@@ -116,14 +119,13 @@ fs_passno: %s
         #cmd.append(self.get_fs_spec())
         cmd.append(self.get_fs_file())
 
-        print "CMD: %s" % cmd
         return cmd
 
     def get_umount_command(self):
         """Returns the UNIX command line for unmounting this entry."""
         cmd = ["/bin/umount"]
         cmd.append(self.get_fs_file())
-        print "CMD: %s" % cmd
+
         return cmd
 
     def mount(self):
@@ -137,13 +139,15 @@ fs_passno: %s
             return subprocess.call(self.get_umount_command())
 
     def get_volume_label(self):
+        """Returns the volume label."""
         return self.__volume_label
 
     def get_volume_uuid(self):
+        """Returns the volume UUID."""
         return self.__volume_uuid
 
     def get_device_path(self):
-        """Returns /dev/XXX like device path for the given entry."""
+        """Returns /dev/path path for the given entry."""
         return self.__device
 
     def get_fs_spec(self):
@@ -202,7 +206,8 @@ fs_passno: %s
         return False
 
 
-class Fstab:
+class Fstab(object):
+    """Class representing an fstab file."""
     def __init__(self, _fstab="/etc/fstab"):
         """Parses fstab file given as the first parameter."""
         self.fstab = _fstab
@@ -225,20 +230,15 @@ class Fstab:
         return False
 
     def mount_file_systems_with_type(self, vfs_types):
-        """Mounts all file systems having a vfstype in [vfs_types] if not mounted."""
+        """Mounts all file systems having a
+           vfstype in [vfs_types] if not mounted."""
         for entry in self.get_entries():
             if not entry.is_mounted() and entry.get_fs_vfstype() in vfs_types:
                 entry.mount()
 
     def unmount_file_systems_with_type(self, vfs_types):
-        """Unmounts all file systems having a vfstype in [vfs_types] if mounted."""
+        """Unmounts all file systems having a
+           vfstype in [vfs_types] if mounted."""
         for entry in self.get_entries():
             if entry.is_mounted() and entry.get_fs_vfstype() in vfs_types:
                 entry.unmount()
-
-
-if __name__ == "__main__":
-    # Test
-    fstab = Fstab()
-    for entry in fstab.get_entries():
-        print entry
