@@ -197,6 +197,10 @@ fs_passno: %s
         """Returns True if the entry corresponds to a remote mount."""
         return self.get_fs_vfstype() in REMOTE_FS_LIST
 
+    def is_nfs(self):
+        """Returns True if the entry corresponds to NFS or NFS4."""
+        return self.get_fs_vfstype() in ("nfs", "nfs4")
+
     def is_mounted(self):
         """Returns True if the entry is currently mounted."""
         # Always parse /proc/mounts for maximum atomicity
