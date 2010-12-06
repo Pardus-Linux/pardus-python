@@ -223,6 +223,25 @@ def getDeviceByUUID(uuid):
     else:
         return None
 
+def getDevice(path):
+    """
+        Gives device address of a path.
+
+        Arguments:
+            path: Directory path
+        Returns:
+            Device address (e.g. "/dev/sda1")
+    """
+    for mount in os.popen("/bin/mount").readlines():
+        mount_items = mount.split()
+        if mount_items[2] == path:
+            if mount_items[0].startswith("/dev"):
+                return mount_items[0]
+            elif mount_items[0].startswith("LABEL="):
+                return getDeviceByLabel(mount_items[0].split('=', 1)[1])
+            elif mount_items[0].startswith("UUID="):
+                return getDeviceByUUID(mount_items[0].split('=', 1)[1])
+
 def getRoot():
     """
         Gives current root device address.
@@ -230,12 +249,16 @@ def getRoot():
         Returns:
             Device address (e.g. "/dev/sda1")
     """
+    return getDevice("/")
 
-    for mount in os.popen("/bin/mount").readlines():
-        mount_items = mount.split()
-        if mount_items[2] == "/":
-            if mount_items[0].startswith("/dev"):
-                return mount_items[0]
-            elif mount_items[0].startswith("LABEL="):
-                return getDeviceByLabel(mount_items[0].split('=', 1)[1])
+def getBoot():
+    """
+        Gives current boot device address.
 
+        Returns:
+            Device address (e.g. "/dev/sda1")
+    """
+    if os.path.ismount("/boot"):
+        return getDevice("/boot")
+    else:
+        return getRoot()
