@@ -226,7 +226,7 @@ class Fstab(object):
         """Returns fstab entries in a list."""
         return self.__entries
 
-    def contains_remoute_mounts(self):
+    def contains_remote_mounts(self):
         """Returns True if the fstab file contains remote mounts."""
         for entry in self.get_entries():
             if entry.is_remote_mount():
