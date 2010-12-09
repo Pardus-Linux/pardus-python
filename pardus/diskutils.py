@@ -242,6 +242,40 @@ def getDevice(path):
             elif mount_items[0].startswith("UUID="):
                 return getDeviceByUUID(mount_items[0].split('=', 1)[1])
 
+def getPartitions():
+    """
+        Returns list of all partitions.
+
+        Returns:
+            List of partitions which includes metadata of partition
+            or None (if blkid not found) e.g.:
+
+            {'/dev/sda1': {label  :'PARDUS_ROOT', # (if exists)
+                           uuid   :'b3cf94b9-ed79-43e2-8b22-b9054a529f01',
+                           fstype :'ext4'}, ... }
+    """
+    if not os.path.exists('/sbin/blkid'):
+        return None
+
+    cmd = os.popen('/sbin/blkid')
+    result = {}
+    try:
+        for line in cmd.readlines():
+            partition = line.split(':')[0]
+            if not result.has_key(partition):
+                result[partition] = {}
+                for info in line.split():
+                    if info.startswith('LABEL='):
+                        result[partition]['label'] = info[6:].strip('"')
+                    if info.startswith('UUID='):
+                        result[partition]['uuid'] = info[5:].strip('"')
+                    if info.startswith('TYPE='):
+                        result[partition]['fstype'] = info[5:].strip('"')
+    except:
+        return None
+    else:
+        return result
+
 def getRoot():
     """
         Gives current root device address.
