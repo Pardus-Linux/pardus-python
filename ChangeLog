@@ -1,0 +1,312 @@
+2010-12-09 gokmen.goksel
+         * getPartitions method added to diskutils:
+         * Returns list of all partitions.
+         * List of partitions which includes metadata of partition
+         * or None (if blkid not found) e.g.:
+         * {'/dev/sda1': {label  :'PARDUS_ROOT', # (if exists)
+         * uuid   :'b3cf94b9-ed79-43e2-8b22-b9054a529f01',
+         * fstype :'ext4'}, ... }
+
+2010-12-08 ozan.caglayan
+         * Fix typo
+
+2010-12-06 bahadir.kandemir
+         * New release
+
+2010-12-06 bahadir.kandemir
+         * Method for getting address of boot directory
+
+2010-11-29 ozan.caglayan
+         * Implement is_nfs()
+
+2010-11-23 ozan.caglayan
+         * hide private list
+
+2010-11-23 ozan.caglayan
+         * Bump to 0.4.6
+
+2010-11-23 ozan.caglayan
+         * Cleanup, refactor, obey to pylint
+
+2010-11-23 ozan.caglayan
+         * Implement (un)mount_file_systems_with_type()
+
+2010-11-22 ozan.caglayan
+         * Remove debug
+
+2010-11-22 ozan.caglayan
+         * Make them None instead of default values
+
+2010-11-22 ozan.caglayan
+         * Implement mount and unmount methods
+
+2010-11-22 ozan.caglayan
+         * Discard empty lines
+
+2010-11-22 ozan.caglayan
+         * return full cmd
+
+2010-11-22 ozan.caglayan
+         * refactor, add more getters.
+
+2010-11-12 ozan.caglayan
+         * Implement is_remote_mount()
+
+2010-11-12 ozan.caglayan
+         * Add fstab parser for general usage in Pardus
+
+2010-07-01 onur
+         * fix indentation, cutting long lines is confusing
+
+2010-06-30 ozan.caglayan
+         * Update copyright dates
+
+2010-06-30 ozan.caglayan
+         * No need to use fnmatch
+
+2009-12-28 patrik
+         * Swedish translation.
+
+2009-12-14 bahadir.kandemir
+         * Moved common methods in Boot.Loader to disk utils
+
+2009-12-14 bahadir.kandemir
+         * Private methods should not end with __
+
+2009-11-16 ozan.caglayan
+         * Add -K for buggy device drivers
+
+2009-11-13 ozan.caglayan
+         * Add ability to run with the new dhcpcd client, fix a parsing error
+
+2009-10-27 fatih
+         * Move pardus-python into trunk
+
+2009-09-25 ozan.caglayan
+         * Add isPPP() method
+
+2009-08-13 bahadir.kandemir
+         * New release
+
+2009-08-07 bahadir.kandemir
+         * Temporary workaround
+
+2009-07-14 necmettin
+         * Turkish translation updates
+
+2009-06-30 bahadir.kandemir
+         * New release
+
+2009-06-25 bahadir.kandemir
+         * Catch IO control exceptions
+
+2009-06-04 bahadir.kandemir
+         * Disable client ID support, thanks to Nihat Ciddi. Previous fix attemp was failed due to not passing empty string after -I argument.
+
+2009-05-28 makmanalp
+         * Added getSignalQuality()
+
+2009-05-20 bahadir.kandemir
+         * Also return False on TypeError
+
+2009-05-20 bahadir.kandemir
+         * New release
+
+2009-05-20 bahadir.kandemir
+         * If quiet mode is enabled, reset ini file
+
+2009-05-17 ozan.caglayan
+         * Don't use python builtins as variable names, drop unused glob import
+
+2009-05-17 ozan.caglayan
+         * shell.py is replaced by shellutils.py, their content is totally equivalent.
+
+2009-05-15 bahadir.kandemir
+         * New release
+
+2009-05-15 bahadir.kandemir
+         * Put locks in right place
+
+2009-05-10 bahadir.kandemir
+         * Return empty set, if section is missing
+
+2009-05-10 bahadir.kandemir
+         * New release
+
+2009-05-09 bahadir.kandemir
+         * It's 2am, what do you expect?
+
+2009-05-09 bahadir.kandemir
+         * ooopsie
+
+2009-05-09 bahadir.kandemir
+         * INI file parsing and manipulation class
+
+2009-05-09 bahadir.kandemir
+         * Ugly hack to save the day
+
+2009-03-07 fatih
+         * always return dict
+
+2009-03-04 isbaran
+         * please fix this in a better way
+
+2009-02-26 ozan.caglayan
+         * Remove re-import
+
+2009-02-23 fatih
+         * fix
+
+2009-01-30 fatih
+         * sync with mudur's list
+
+2009-01-30 fatih
+         * Utility function which gets kernel command line options
+         * In [9]: open("/proc/cmdline").read()
+         * Out[9]: 'root=LABEL=PARDUS_ROOT vga=791 splash=silent quiet mudur=language:en,foo resume=/dev/sda5 mudur=bar,language:tr\n'
+         * In [10]: getKernelOption("mudur")
+         * Out[10]: {'bar': '', 'foo': '', 'language': 'tr'}
+         * In [11]: getKernelOption("quiet")
+         * Out[11]: {'': ''}
+         * In [12]: getKernelOption("missing_option")
+         * In [13]: 
+
+2009-01-26 bahadir.kandemir
+         * Useful methods from Boot.Loader code
+
+2008-12-29 bahadir.kandemir
+         * bumo
+
+2008-12-19 bahadir.kandemir
+         * Return None if interface has no address
+
+2008-12-05 gokmen.goksel
+         * Don't care lines which starts #
+         * Remove tabs before processing it may cause some corruptions while reading froeign grub.conf (such as Ubuntu)
+         * Bug fixed at http://bugs.pardus.org.tr/7632
+
+2008-11-10 bahadir.kandemir
+         * Always remove lease file
+
+2008-11-07 bahadir.kandemir
+         * Always remote DHCP lease file. DHCPCD tries to assign last IP when timed out.
+
+2008-08-20 fatih
+         * change default variant to '' from 'basic'
+
+2008-06-26 fatih
+         * arrgh, key must be KDE locale
+
+2008-06-26 fatih
+         * sync with YALI
+
+2008-06-26 fatih
+         * fix for pt_BR language
+
+2008-06-24 bahadir.kandemir
+         * 0.3.1
+
+2008-06-24 bahadir.kandemir
+         * Get gateway information from DHCP (Fatih Aşıcı)
+
+2008-06-09 bahadir.kandemir
+         * Comment added to http://bugs.pardus.org.tr/7280
+         * Get vendor data from uevent file
+
+2008-05-21 bahadir.kandemir
+         * lock file directly
+
+2008-05-21 bahadir.kandemir
+         * ignore sr* devices
+
+2008-05-05 fatih
+         * bump
+
+2008-05-05 fatih
+         * set executable
+
+2008-05-05 fatih
+         * remove svn:executable
+
+2008-05-05 fatih
+         * add translations
+
+2008-05-04 fatih
+         * add localedata module. mudur, zorg and yali can use it.
+
+2008-02-11 bahadir.kandemir
+         * install csapi
+
+2008-02-09 bahadir.kandemir
+         * merge with branch
+
+2007-12-13 bahadir.kandemir
+         * forgot to add xorg module
+
+2007-12-13 bahadir.kandemir
+         * Pardus Python Modules 0.2
+         * New module: grubutils
+
+2007-12-04 bahadir.kandemir
+         * Get all block devices except floppy and ram disks and loop devices.
+
+2007-12-04 bahadir.kandemir
+         * diskutils module - allows getting a list of bootable devices, also boot orders
+
+2007-05-10 cartman
+         * add docs
+
+2007-05-10 cartman
+         * introduce ascii_lower and ascii_upper thanks Gürer for the tip
+
+2007-01-31 baris
+         * fileutils -> filelock for more concrete naming :)
+
+2007-01-31 baris
+         * add shell.py for generic shell utilities. remove dirutils.py
+
+2007-01-26 baris
+         * - pmp -> pardus
+         * - update doc (python tools/gen_docs.py > MODULES)
+
+2007-01-26 baris
+         * new name...
+
+2007-01-26 baris
+         * 'import pardus.xorg' is much better than 'import pmp.xorg'
+
+2007-01-26 baris
+         * pmp -> pardus-python.
+
+2007-01-24 baris
+         * indent
+
+2007-01-17 baris
+         * minor clean up.
+
+2007-01-17 baris
+         * python modules gathered...
+
+2007-01-17 baris
+         * - unused module codecs.
+         * - use Python exceptions, don't create yours.
+         * - don't raise string, use exceptions.
+         * - don't use builtins as variables (type -> _type)
+
+2007-01-17 baris
+         * - add FileLock class from comar/api/utility.py
+         * - remove ancient {open,save}_utf8 functions.
+
+2007-01-09 baris
+         * PMP (Python Modules for Pardus)
+         * An attempt for centralizing the common functionality in Pardus projects.
+         * Lifted functions/modules:
+         * - yali/extensions/xcapslock -> pmp/xorg/capslock
+         * - yali/sysutils.py (find_executable) -> pmp/sysutils.py
+         * - pisimat/utils.py (load, save) -> pmp/fileutils.py (open_utf8, save_utf8)
+         * - pisi/utils.py (string/list/functional) -> pmp/strutils.py
+         * - mudur.py (touch) -> pmp/fileutils.py
+         * - mudur.py (capture, run, run_full, run_quiet) -> pmp/procutils.py
+         * - pisi/utils.py (xterm_title, xterm_reset) -> pmp/xorg/xterm.py (set_title, reset_title)
+         * - pisi/utils.py (remove_dir, dir_size) -> pmp/dirutils.py
+
