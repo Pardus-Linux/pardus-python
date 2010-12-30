@@ -157,6 +157,8 @@ languages = {
     "hu":   Language(
         name                = _("Hungarian"),
         locale              = "hu_HU.UTF-8",
+        console_font        = "lat2a-16",
+        console_translation = "8859-2",
         keymaps             = [Keymap("hu")]
     ),
 
