@@ -225,6 +225,8 @@ languages = {
     "ru":   Language(
         name                = _("Russian"),
         locale              = "ru_RU.UTF-8",
+        console_font        = "Cyr_a8x16",
+        console_translation = "8859-5",
         keymaps             = [Keymap("ru")]
     ),
 
